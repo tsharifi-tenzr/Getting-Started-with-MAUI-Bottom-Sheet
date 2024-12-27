@@ -1,0 +1,22 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:bottomSheet="clr-namespace:Syncfusion.Maui.Toolkit.BottomSheet;assembly=Syncfusion.Maui.Toolkit"
+             xmlns:local="clr-namespace:BottomSheet"
+             x:Class="BottomSheet.MainPage">
+
+    <bottomSheet:SfBottomSheet x:Name="bottomSheet" AllowedState="HalfExpanded"
+                               IsModal="False">
+        <bottomSheet:SfBottomSheet.Content>
+            <VerticalStackLayout Padding="20">
+                <Button Text="Open Bottom Sheet" Clicked="OpenBottomSheet"
+                        WidthRequest="180" CornerRadius="30" VerticalOptions="Center"/>
+            </VerticalStackLayout>
+        </bottomSheet:SfBottomSheet.Content>
+        <bottomSheet:SfBottomSheet.BottomSheetContent>
+            <Label Text="Bottom Sheet Content" HorizontalOptions="Center"
+                   VerticalOptions="Center" FontSize="18"/>
+        </bottomSheet:SfBottomSheet.BottomSheetContent>
+    </bottomSheet:SfBottomSheet>
+
+</ContentPage>
