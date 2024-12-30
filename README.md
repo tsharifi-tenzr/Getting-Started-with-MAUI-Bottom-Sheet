@@ -5,19 +5,57 @@ This sample demonstrates how to get started with the MAUI Bottom Sheet control i
 ## Sample
 
 ```xaml
-<bottomSheet:SfBottomSheet x:Name="bottomSheet" AllowedState="HalfExpanded"
-                           IsModal="False">
-    <bottomSheet:SfBottomSheet.Content>
-        <VerticalStackLayout Padding="20">
-            <Button Text="Open Bottom Sheet" Clicked="OpenBottomSheet"
-                    WidthRequest="180" CornerRadius="30" VerticalOptions="Center"/>
-        </VerticalStackLayout>
-    </bottomSheet:SfBottomSheet.Content>
-    <bottomSheet:SfBottomSheet.BottomSheetContent>
-        <Label Text="Bottom Sheet Content" HorizontalOptions="Center"
-               VerticalOptions="Center" FontSize="18"/>
-    </bottomSheet:SfBottomSheet.BottomSheetContent>
-</bottomSheet:SfBottomSheet>
+<Grid>
+    <ListView ItemsSource="{Binding Books}" ItemTapped="ListViewItemTapped"
+              HasUnevenRows="True">
+        <ListView.ItemTemplate>
+            <DataTemplate>
+                <ViewCell>
+                    <VerticalStackLayout Padding="10">
+                        <Label Text="{Binding Title}" FontSize="20" FontAttributes="Bold"/>
+                        <Label Text="{Binding Description}" FontSize="14" 
+                               TextColor="Gray"/>
+                    </VerticalStackLayout>
+                </ViewCell>
+            </DataTemplate>
+        </ListView.ItemTemplate>
+    </ListView>
+
+    <bottomSheet:SfBottomSheet x:Name="bottomSheet" HalfExpandedRatio="0.35">
+        <bottomSheet:SfBottomSheet.BottomSheetContent>
+            <VerticalStackLayout x:Name="bottomSheetContent" Spacing="5">
+                <Grid ColumnDefinitions="120,*" ColumnSpacing="10">
+                    <Label Text="Title:" FontSize="18" FontAttributes="Bold"/>
+                    <Label Text="{Binding Title}" FontSize="18" 
+                           VerticalTextAlignment="Center" Grid.Column="1"/>
+                </Grid>
+                <Grid ColumnDefinitions="120, *" ColumnSpacing="10">
+                    <Label Text="Genre:" FontSize="18" FontAttributes="Bold"/>
+                    <Label Text="{Binding Genre}" FontSize="18" VerticalTextAlignment="Center" Grid.Column="1"/>
+                </Grid>
+                <Grid ColumnDefinitions="120, *" ColumnSpacing="10">
+                    <Label Text="Published:" FontSize="18" FontAttributes="Bold"/>
+                    <Label Text="{Binding Published}" FontSize="18" VerticalTextAlignment="Center" Grid.Column="1"/>
+                </Grid>
+                <Grid ColumnDefinitions="120, *" ColumnSpacing="10">
+                    <Label Text="Description:" FontSize="18" FontAttributes="Bold"/>
+                    <Label Text="{Binding Description}" FontSize="18" VerticalTextAlignment="Center" Grid.Column="1"/>
+                </Grid>
+                <Grid ColumnDefinitions="120,*" ColumnSpacing="10">
+                    <Label Text="Price:" FontSize="18" FontAttributes="Bold"/>
+                    <Label FontSize="18" VerticalTextAlignment="Center" Grid.Column="1">
+                        <Label.FormattedText>
+                            <FormattedString>
+                                <Span Text="$" FontAttributes="Bold"/>
+                                <Span Text="{Binding Price, StringFormat='{0:F2}'}"/>
+                            </FormattedString>
+                        </Label.FormattedText>
+                    </Label>
+                </Grid> 
+            </VerticalStackLayout>
+        </bottomSheet:SfBottomSheet.BottomSheetContent>
+    </bottomSheet:SfBottomSheet>
+</Grid>
 ```
 
 ## Requirements to run the demo
