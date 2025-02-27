@@ -51,8 +51,8 @@ steps:
       echo "Currently selected Xcode:"
       xcrun xcode-select --print-path
       echo
-      echo "Selecting latest Xcode: Xcode_16.app"
-      sudo xcode-select -s /Applications/Xcode_16.app
+      echo "Selecting latest Xcode: Xcode_16.2.app"
+      sudo xcode-select -s /Applications/Xcode_16.2.app
       xcrun xcode-select --print-path
       xcodebuild -version
       sudo xcodebuild -runFirstLaunch
