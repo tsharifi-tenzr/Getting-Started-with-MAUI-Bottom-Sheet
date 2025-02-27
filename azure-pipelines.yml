@@ -110,6 +110,7 @@ steps:
       projects: '**/BottomSheet.csproj'
       arguments: '-f:net9.0-ios -c:Release /p:ArchiveOnBuild=true /p:EnableAssemblyILStripping=false'
       zipAfterPublish: false
+      publishWebProjects: false
 
   - task: CopyFiles@2
     displayName: "Copy file from Build to Staging"
