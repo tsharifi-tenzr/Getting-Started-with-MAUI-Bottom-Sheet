@@ -20,15 +20,23 @@
 		<ImplicitUsings>enable</ImplicitUsings>
 		<Nullable>enable</Nullable>
 
-		<!-- Display name -->
-		<ApplicationTitle>BottomSheet</ApplicationTitle>
-
-		<!-- App Identifier -->
-		<ApplicationId>com.companyname.bottomsheet</ApplicationId>
-
 		<!-- Versions -->
-		<ApplicationDisplayVersion>1.0</ApplicationDisplayVersion>
-		<ApplicationVersion>1</ApplicationVersion>
+		<ApplicationDisplayVersion>2.0.1778</ApplicationDisplayVersion>
+		<ApplicationVersion>2.0.5.1778</ApplicationVersion>
+		<AssemblyVersion>2.0.1778.5</AssemblyVersion>
+
+
+
+		<!-- Display name -->
+		<ApplicationTitle>Tenzr Mobile</ApplicationTitle>
+
+
+		<PropertyGroup Condition="'$(TargetFramework)'=='net9.0-ios'">
+			<CodesignKey>Apple Distribution: BioInteractive Technologies Inc. (6V4WUP7G4M)</CodesignKey>
+			<CodesignProvision>HermesProvisionProfileMay2025</CodesignProvision>
+			<ProvisioningType>manual</ProvisioningType>
+			<ApplicationId>com.biointeractivetech.hermes</ApplicationId>
+		</PropertyGroup>
 
 		<!-- To develop, package, and publish an app to the Microsoft Store, see: https://aka.ms/MauiTemplateUnpackaged -->
 		<WindowsPackageType>None</WindowsPackageType>
