@@ -1,19 +1,136 @@
-# Starter pipeline
 # Start with a minimal pipeline that you can customize to build and deploy your code.
 # Add steps that build, run tests, deploy, and more:
 # https://aka.ms/yaml
 
+#This controls what the initial name of the build is.
+name: $(new_major).$(new_minor).$(revision_number).$(build_version)
+
+#Only trigger when a branch is tagged with the specified pattern
+parameters:
+  - name: "Environment"
+    type: string
+    default: Dev
+    values:
+      - Dev
+      - Production
+
 trigger:
-- master
+  - none
+
+pr:
+  - none
+
+variables:
+  - group: "BitBucket Credentials" # Contains SSH key for pushing to Bitbucket.
+  - ${{ if eq(parameters['Environment'], 'Dev') }}:
+      - group: "EnvJsonVar_Dev" #Contains variables for env.json.
+      - group: "AppCenter_Dev"
+      - name: displayName
+        value: "Project_Nike"
+      - name: buildType
+        value: "development"
+  - ${{ if eq(parameters['Environment'], 'Production') }}:
+      - group: "EnvJsonVar_Prod"
+      - group: "AppCenter_Release"
+      - name: buildType
+        value: "release"
+  - group: "iOS Signing And Provisioning" # This is defined in the Azure DevOps Library.
 
 pool:
-  vmImage: ubuntu-latest
+  vmImage: "macos-latest"
+  demands: xcode
 
 steps:
-- script: echo Hello, world!
-  displayName: 'Run a one-line script'
+  - script: |
+      echo Mac OS version:
+      sw_vers -productVersion
+      echo
+      echo Installed Xcode versions:
+      ls /Applications | grep 'Xcode'
+      echo
+      echo "Currently selected Xcode:"
+      xcrun xcode-select --print-path
+      echo
+      echo "Selecting latest Xcode: Xcode_16.app"
+      sudo xcode-select -s /Applications/Xcode_16.app
+      xcrun xcode-select --print-path
+      xcodebuild -version
+      sudo xcodebuild -runFirstLaunch
+    displayName: Select Xcode 16.1 Beta 2 Version
 
-- script: |
-    echo Add other tasks to build, test, and deploy your project.
-    echo See https://aka.ms/yaml
-  displayName: 'Run a multi-line script'
+  - checkout: self
+    clean: true
+    persistCredentials: true
+    condition: always()
+    displayName: "Checkout Repos"
+
+  - task: UseDotNet@2
+    displayName: "Install .NET sdk"
+    inputs:
+      packageType: sdk
+      version: 9.0.x
+      installationPath: $(Agent.ToolsDirectory)/dotnet
+
+  - task: CmdLine@2
+    displayName: "Install Maui Workload"
+    inputs:
+      script: "sudo dotnet workload install maui"
+
+  - task: CmdLine@2
+    displayName: "Check Maui Version in Use"
+    inputs:
+      script: "dotnet workload list"
+
+  #Install Apple certificate
+  #Install an Apple certificate required to build on a macOS agent machine
+  - task: InstallAppleCertificate@2
+    inputs:
+      certSecureFile: may2025ios.p12
+      certPwd: "$(distributionMay2024.p12Password)"
+      keychain: "temp" # Delete the keychain when the host closes.
+    displayName: "Install Apple Certificate"
+
+  #Install Apple provisioning profile
+  #Install an Apple provisioning profile required to build on a macOS agent machine
+  - task: InstallAppleProvisioningProfile@1
+    inputs:
+      provisioningProfileLocation: "secureFiles"
+      provProfileSecureFile: $(MobileProvision_June_2023)
+      removeProfile: true # Remove profile when the host closes.
+    displayName: "Install Provisioning Profile"
+
+  - task: DotNetCoreCLI@2
+    continueOnError: true
+    displayName: "Build the iOS Binaries"
+    inputs:
+      command: "publish"
+      publishWebProjects: false
+      projects: |
+        **/***/*et.csproj
+      arguments: "-f:net8.0-ios -c:Release /p:ArchiveOnBuild=true /p:EnableAssemblyILStripping=false"
+      zipAfterPublish: false
+
+  - task: CopyFiles@2
+    displayName: "Copy file from Build to Staging"
+    inputs:
+      SourceFolder: "$(Agent.BuildDirectory)"
+      Contents: "**/*.ipa"
+      TargetFolder: "$(Build.ArtifactStagingDirectory)"
+      CleanTargetFolder: true
+      OverWrite: true
+      flattenFolders: true
+
+  #Publish .ipa file to 'drop' so it can be retrieved later.
+  - task: PublishBuildArtifacts@1
+    displayName: "Publish Artifact: drop"
+    inputs:
+      PathtoPublish: "$(build.artifactstagingdirectory)"
+      TargetPath: "**/*.ipa"
+      artifactName: "$(AppName).iOS"
+      publishLocation: "Container"
+      parallel: true
+
+  - script: |
+      echo "Uploading .ipa file to TestFlight..."
+      xcrun altool --upload-app --type ios --file $(IpaPath) --username $(username) --password $(AppSpecificPassword) --asc-provider $(TeamID)
+    displayName: "Upload Hermes IPA"
