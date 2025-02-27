@@ -100,14 +100,15 @@ steps:
     displayName: "Install Provisioning Profile"
 
   - task: DotNetCoreCLI@2
-    continueOnError: true
-    displayName: "Build the iOS Binaries"
     inputs:
-      command: "publish"
-      publishWebProjects: false
-      projects: |
-        **/***/*et.csproj
-      arguments: "-f:net9.0-ios -c:Release /p:ArchiveOnBuild=true /p:EnableAssemblyILStripping=false"
+      command: 'restore'
+      projects: '**/*.csproj'
+      
+  - task: DotNetCoreCLI@2
+    inputs:
+      command: 'publish'
+      projects: '**/BottomSheet.csproj'
+      arguments: '-f:net9.0-ios -c:Release /p:ArchiveOnBuild=true /p:EnableAssemblyILStripping=false'
       zipAfterPublish: false
 
   - task: CopyFiles@2
