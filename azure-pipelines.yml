@@ -99,11 +99,16 @@ steps:
       removeProfile: true # Remove profile when the host closes.
     displayName: "Install Provisioning Profile"
 
-  - task: DotNetCoreCLI@2
-    inputs:
-      command: 'restore'
-      projects: '**/*.csproj'
-      
+  # - task: DotNetCoreCLI@2
+  #   inputs:
+  #     command: 'restore'
+  #     projects: '**/*.csproj'
+
+  # - task: DotNetCoreCLI@2
+  #   inputs:
+  #     command: 'clean'
+  #     projects: '**/*.csproj'
+
   - task: DotNetCoreCLI@2
     inputs:
       command: 'publish'
